@@ -2,6 +2,7 @@
 # It provides functions to create windows, draw shapes, handle events, and play sounds.
 import pygame
 
+
 """
 This is the initial starting point to build the snake game.
 It has the minimal boiler-plate pygame code to get started.
