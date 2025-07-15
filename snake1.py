@@ -15,13 +15,32 @@ COLOUR_BLACK = (0, 0, 0)
 COLOUR_RED = (255, 0, 0)
 COLOUR_BLUE = (0, 0, 255)
 
+NUM_SQUARES_X = 32  # Number of squares in the X direction
+NUM_SQUARES_Y = 24  # Number of squares in the Y direction
+SQUARE_SIZE = 20  # Size of the square (snake segment)
+SCREEN_WIDTH = NUM_SQUARES_X * SQUARE_SIZE
+SCREEN_HEIGHT = NUM_SQUARES_Y * SQUARE_SIZE
+INITIAL_X = NUM_SQUARES_X // 2
+INITIAL_Y = NUM_SQUARES_Y // 2
+
+x = INITIAL_X
+y = INITIAL_Y
+
+def out_of_bounds(x, y):
+    """
+    Check if the given coordinates are out of bounds.
+    Returns True if out of bounds, False otherwise.
+    """
+    return x >= NUM_SQUARES_X or x < 0 or y >= NUM_SQUARES_Y or y < 0
+
+
 # Initialize Pygame
 pygame.init()
 # Initialize the mixer module (which is used for sound)
 pygame.mixer.init()  
 
 # Create the game window
-screen = pygame.display.set_mode((640, 480))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Set the title of the window
 pygame.display.set_caption("Python Snake Game")
@@ -42,14 +61,25 @@ while not game_over:
                 colour = COLOUR_BLUE
             elif event.key == pygame.K_r:
                 colour = COLOUR_RED
+            elif event.key == pygame.K_UP:
+                y = y - 1
+            elif event.key == pygame.K_DOWN:
+                y = y + 1
+            elif event.key == pygame.K_LEFT:
+                x = x - 1
+            elif event.key == pygame.K_RIGHT:
+                x = x + 1
+
+    if out_of_bounds(x, y):
+        game_over = True
 
     # Fill the background with black
     screen.fill(COLOUR_BLACK)
 
     # Draw a COLOUR_GREEN square (the snake) at the center of the screen
-    # The square is 20x20 pixels in size and is drawn at (320, 240) on the screen.
+    # The square is SQUARE_SIZE x SQUARE_SIZE pixels in size and is drawn at (x, y) on the screen.
     # The coordinates are the top-left corner of the square.
-    pygame.draw.rect(screen, colour, [320, 240, 20,20])
+    pygame.draw.rect(screen, colour, [x*SQUARE_SIZE, y*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE])
 
     pygame.display.update()
     clock.tick(5)  # Limit the frame rate to 5 FPS
