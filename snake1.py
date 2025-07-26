@@ -23,7 +23,7 @@ SCREEN_HEIGHT = NUM_SQUARES_Y * SQUARE_SIZE
 INITIAL_X = NUM_SQUARES_X // 2
 INITIAL_Y = NUM_SQUARES_Y // 2
 
-snake = [INITIAL_X, INITIAL_Y]  # Initialize the snake with one segment at the center of the screen
+snake = [(INITIAL_X, INITIAL_Y)]  # Initialize the snake with one segment at the center of the screen
 
 def out_of_bounds(x, y):
     """
@@ -60,16 +60,18 @@ while not game_over:
                 colour = COLOUR_BLUE
             elif event.key == pygame.K_r:
                 colour = COLOUR_RED
+            elif event.key == pygame.K_g:
+                colour = COLOUR_GREEN
             elif event.key == pygame.K_UP:
-                snake[1] = snake[1] - 1
+                snake[0] = (snake[0][0], snake[0][1] - 1)
             elif event.key == pygame.K_DOWN:
-                snake[1] = snake[1] + 1
+                snake[0] = (snake[0][0], snake[0][1] + 1)
             elif event.key == pygame.K_LEFT:
-                snake[0] = snake[0] - 1
+                snake[0] = (snake[0][0] - 1, snake[0][1])
             elif event.key == pygame.K_RIGHT:
-                snake[0] = snake[0] + 1
+                snake[0] = (snake[0][0] + 1, snake[0][1])
 
-    if out_of_bounds(snake[0], snake[1]):
+    if out_of_bounds(snake[0][0], snake[0][1]):
         game_over = True
 
     # Fill the background with black
@@ -78,7 +80,7 @@ while not game_over:
     # Draw a COLOUR_GREEN square (the snake) at the center of the screen
     # The square is SQUARE_SIZE x SQUARE_SIZE pixels in size and is drawn at (x, y) on the screen.
     # The coordinates are the top-left corner of the square.
-    pygame.draw.rect(screen, colour, [snake[0]*SQUARE_SIZE, snake[1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE])
+    pygame.draw.rect(screen, colour, [snake[0][0]*SQUARE_SIZE, snake[0][1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE])
 
     pygame.display.update()
     clock.tick(5)  # Limit the frame rate to 5 FPS
