@@ -14,6 +14,21 @@ COLOUR_GREEN = (0, 255, 0)
 COLOUR_BLACK = (0, 0, 0)
 COLOUR_RED = (255, 0, 0)
 COLOUR_BLUE = (0, 0, 255)
+COLOUR_YELLOW = (255, 255, 0)
+
+KEY_COLOUR_DICT = {
+    pygame.K_g: COLOUR_GREEN,
+    pygame.K_r: COLOUR_RED,
+    pygame.K_b: COLOUR_BLUE, 
+    pygame.K_y: COLOUR_YELLOW
+}
+
+KEY_DIRECTION_DICT = {
+    pygame.K_UP: (0, -1),
+    pygame.K_DOWN: (0, 1),
+    pygame.K_LEFT: (-1, 0),
+    pygame.K_RIGHT: (1, 0)
+}
 
 NUM_SQUARES_X = 32  # Number of squares in the X direction
 NUM_SQUARES_Y = 24  # Number of squares in the Y direction
@@ -23,13 +38,16 @@ SCREEN_HEIGHT = NUM_SQUARES_Y * SQUARE_SIZE
 INITIAL_X = NUM_SQUARES_X // 2
 INITIAL_Y = NUM_SQUARES_Y // 2
 
-snake = [(INITIAL_X, INITIAL_Y)]  # Initialize the snake with one segment at the center of the screen
+snake = [(INITIAL_X, INITIAL_Y), (INITIAL_X - 1 , INITIAL_Y) , (INITIAL_X - 1 , INITIAL_Y - 1)]  # Initialize the snake with one segment at the center of the screen
 
-def out_of_bounds(x, y):
+def out_of_bounds(snake):
     """
     Check if the given coordinates are out of bounds.
     Returns True if out of bounds, False otherwise.
     """
+    snake_head = snake[0]
+    x = snake_head[0]
+    y = snake_head[1]
     return x >= NUM_SQUARES_X or x < 0 or y >= NUM_SQUARES_Y or y < 0
 
 
@@ -55,23 +73,16 @@ while not game_over:
             game_over = True
 
         if event.type == pygame.KEYDOWN:
-            # If the user presses the escape key, exit the game
-            if event.key == pygame.K_b:
-                colour = COLOUR_BLUE
-            elif event.key == pygame.K_r:
-                colour = COLOUR_RED
-            elif event.key == pygame.K_g:
-                colour = COLOUR_GREEN
-            elif event.key == pygame.K_UP:
-                snake[0] = (snake[0][0], snake[0][1] - 1)
-            elif event.key == pygame.K_DOWN:
-                snake[0] = (snake[0][0], snake[0][1] + 1)
-            elif event.key == pygame.K_LEFT:
-                snake[0] = (snake[0][0] - 1, snake[0][1])
-            elif event.key == pygame.K_RIGHT:
-                snake[0] = (snake[0][0] + 1, snake[0][1])
+            if event.key in KEY_COLOUR_DICT:
+                colour = KEY_COLOUR_DICT[event.key]
 
-    if out_of_bounds(snake[0][0], snake[0][1]):
+            if event.key in KEY_DIRECTION_DICT:
+                dx,dy = KEY_DIRECTION_DICT[event.key]
+                new_snake_head = (snake[0][0] + dx, snake[0][1] + dy)
+                snake.insert(0 , new_snake_head)
+                snake.pop()
+
+    if out_of_bounds(snake):
         game_over = True
 
     # Fill the background with black
@@ -80,7 +91,8 @@ while not game_over:
     # Draw a COLOUR_GREEN square (the snake) at the center of the screen
     # The square is SQUARE_SIZE x SQUARE_SIZE pixels in size and is drawn at (x, y) on the screen.
     # The coordinates are the top-left corner of the square.
-    pygame.draw.rect(screen, colour, [snake[0][0]*SQUARE_SIZE, snake[0][1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE])
+    for segment in snake: 
+        pygame.draw.rect(screen, colour, [segment[0]*SQUARE_SIZE, segment[1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE])
 
     pygame.display.update()
     clock.tick(5)  # Limit the frame rate to 5 FPS
